@@ -65,7 +65,8 @@ public class SecurityConfig {
                 "http://127.0.0.1:*",
                 "https://*.catane.in",
                 "https://catane.in",
-                "https://*.vercel.app"
+                "https://*.vercel.app",
+                "https://*.pages.dev"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
