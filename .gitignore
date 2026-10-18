@@ -1,0 +1,38 @@
+# ==============================================================================
+# Catane Gather - Root Git Ignore
+# ==============================================================================
+
+# Environment files and credentials
+.env
+.env.*
+.env.local
+.env.*.local
+!.env.example
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Dependencies
+node_modules/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Build Artifacts
+dist/
+dist-ssr/
+build/
+target/
+*.log
+
+# Backend uploads / runtime generated data
+backend/uploads/*
+!backend/uploads/.gitkeep
+uploads/*
+!uploads/.gitkeep
