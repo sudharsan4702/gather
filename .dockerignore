@@ -1,0 +1,10 @@
+frontend/
+backend/target/
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+*.md
+.idea/
+.vscode/
