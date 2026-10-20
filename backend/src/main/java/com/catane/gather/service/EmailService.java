@@ -27,6 +27,12 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final HttpClient httpClient;
 
+    @Value("${brevo.api-key:${BREVO_API_KEY:}}")
+    private String brevoApiKey;
+
+    @Value("${brevo.sender-email:${BREVO_SENDER_EMAIL:sudharsannotout@gmail.com}}")
+    private String brevoSenderEmail;
+
     @Value("${resend.api-key:${RESEND_API_KEY:}}")
     private String resendApiKey;
 
@@ -50,7 +56,16 @@ public class EmailService {
         String subject = "Catane Gather: Your " + purposeLabel + " Code is " + otp;
         String htmlContent = buildOtpHtmlTemplate(otp, purposeLabel);
 
-        // 1. Priority: If RESEND_API_KEY is configured, send via Resend HTTPS (bypasses Render SMTP port blocks)
+        // 1. Priority: If BREVO_API_KEY is configured, send via Brevo HTTPS (sends to ANY recipient on port 443)
+        if (brevoApiKey != null && !brevoApiKey.isBlank()) {
+            boolean sent = sendViaBrevo(toEmail, subject, htmlContent, purposeLabel, otp);
+            if (sent) {
+                return;
+            }
+            log.warn("Brevo delivery failed. Falling back to next provider...");
+        }
+
+        // 2. If RESEND_API_KEY is configured, send via Resend HTTPS (bypasses Render SMTP port blocks)
         if (resendApiKey != null && !resendApiKey.isBlank()) {
             boolean sent = sendViaResend(toEmail, subject, htmlContent, purposeLabel, otp);
             if (sent) {
@@ -115,6 +130,50 @@ public class EmailService {
             }
         } catch (Exception e) {
             log.error("Error communicating with Resend API for {}: {}. [DEV FALLBACK] OTP code is: {}",
+                    toEmail, e.getMessage(), otp);
+            return false;
+        }
+    }
+
+    private boolean sendViaBrevo(String toEmail, String subject, String htmlContent, String purposeLabel, String otp) {
+        try {
+            JSONObject body = new JSONObject();
+
+            JSONObject sender = new JSONObject();
+            sender.put("name", senderName);
+            sender.put("email", brevoSenderEmail);
+            body.put("sender", sender);
+
+            JSONArray toArray = new JSONArray();
+            JSONObject toRecipient = new JSONObject();
+            toRecipient.put("email", toEmail);
+            toArray.put(toRecipient);
+            body.put("to", toArray);
+
+            body.put("subject", subject);
+            body.put("htmlContent", htmlContent);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.brevo.com/v3/smtp/email"))
+                    .timeout(Duration.ofSeconds(15))
+                    .header("api-key", brevoApiKey.trim())
+                    .header("accept", "application/json")
+                    .header("content-type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(body.toString(), StandardCharsets.UTF_8))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                log.info("Successfully sent {} OTP email to {} via Brevo HTTPS (status {})", purposeLabel, toEmail, response.statusCode());
+                return true;
+            } else {
+                log.error("Brevo API rejected email to {}. HTTP {}: {}. [DEV FALLBACK] OTP code is: {}",
+                        toEmail, response.statusCode(), response.body(), otp);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("Error communicating with Brevo API for {}: {}. [DEV FALLBACK] OTP code is: {}",
                     toEmail, e.getMessage(), otp);
             return false;
         }
