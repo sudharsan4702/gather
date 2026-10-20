@@ -10,7 +10,8 @@ import {
   Calendar, MapPin, Clock, Save, Trash2, Plus, Minus, Navigation, ArrowLeft, 
   Eye, Check, Bell, Image as ImageIcon, Share2, Users, Settings, 
   ExternalLink, FileSpreadsheet, Search, AlertCircle, MessageSquare,
-  Lock, Key, Shield, Edit2, Edit3, Sparkles, X, Smartphone, Monitor, Upload, Loader2, Ticket, Copy
+  Lock, Key, Shield, Edit2, Edit3, Sparkles, X, Smartphone, Monitor, Upload, Loader2, Ticket, Copy,
+  MoreVertical, CheckCircle2
 } from 'lucide-react';
 
 const MAX_PHOTOS_LIMIT = 20;
@@ -33,6 +34,7 @@ export const GatherEditor = () => {
   const [previewDevice, setPreviewDevice] = useState('mobile'); // 'mobile' | 'desktop'
   const [previewAttendance, setPreviewAttendance] = useState('ATTENDING');
   const [previewHeadcount, setPreviewHeadcount] = useState(1);
+  const [isMobileMoreOpen, setIsMobileMoreOpen] = useState(false);
 
   const isConcluded = Boolean(gather?.concluded || gather?.status === 'COMPLETED' || gather?.status === 'ARCHIVED' || (gather?.eventDate && (() => {
     try {
@@ -1061,10 +1063,10 @@ export const GatherEditor = () => {
       
       {/* SaaS Studio Top Bar (Luma Studio Architecture) */}
       <header className="editor-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
           <Link to="/dashboard" style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', flexShrink: 0 }} title="Back to Events">
             <ArrowLeft size={18} />
-            <div style={{
+            <div className="editor-brand-icon" style={{
               width: '28px',
               height: '28px',
               borderRadius: '6px',
@@ -1081,18 +1083,18 @@ export const GatherEditor = () => {
               Catane
             </span>
           </Link>
-          <div style={{ borderLeft: '1px solid var(--border-subtle)', paddingLeft: '10px', minWidth: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div className="editor-header-divider" style={{ borderLeft: '1px solid var(--border-subtle)', paddingLeft: '10px', minWidth: 0, flex: 1 }}>
+            <div className="editor-title-meta" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span className={isConcluded ? 'badge badge-neutral' : isPublished ? 'badge badge-live' : 'badge badge-draft'} style={isConcluded ? { background: '#f1f5f9', color: '#475569', borderColor: '#cbd5e1' } : {}}>
                 {isConcluded ? 'Concluded' : isPublished ? 'Published' : 'Draft'}
               </span>
               {feedback && (
-                <span style={{ fontSize: '0.78rem', color: '#16a34a', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span className="editor-autosave-feedback" style={{ fontSize: '0.78rem', color: '#16a34a', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <Check size={12} /> {feedback}
                 </span>
               )}
             </div>
-            <h1 className="editor-header-title" style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <h1 className="editor-header-title" style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px', maxWidth: '280px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {details.title || 'Untitled Event'}
             </h1>
           </div>
@@ -1105,7 +1107,7 @@ export const GatherEditor = () => {
             type="button"
             onClick={() => setIsTopUpOpen(true)}
             className="btn-tactile btn-tactile-paper"
-            style={{ fontSize: '0.78rem', padding: '5px 8px', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+            style={{ fontSize: '0.78rem', padding: '5px 8px', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}
             title="Credits · Click to top up"
           >
             <Ticket size={14} style={{ color: 'var(--accent-vermilion)' }} />
@@ -1118,7 +1120,7 @@ export const GatherEditor = () => {
             type="button"
             onClick={handleDuplicate}
             disabled={duplicating}
-            className="btn-secondary"
+            className="btn-secondary editor-desktop-action"
             style={{ fontSize: '0.82rem', padding: '6px 10px', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '5px' }}
             title="Duplicate as new event draft"
           >
@@ -1128,7 +1130,7 @@ export const GatherEditor = () => {
           <Link
             to={`/gather/${id}/preview`}
             target="_blank"
-            className="btn-secondary"
+            className="btn-secondary editor-desktop-action"
             style={{ fontSize: '0.82rem', padding: '6px 10px', whiteSpace: 'nowrap' }}
             title="Preview invitation"
           >
@@ -1141,12 +1143,12 @@ export const GatherEditor = () => {
               onClick={handleDuplicate}
               disabled={duplicating}
               className="btn-tactile btn-tactile-sunflower"
-              style={{ fontSize: '0.82rem', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' }}
+              style={{ fontSize: '0.82rem', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', flexShrink: 0 }}
             >
-              <Copy size={13} /> <span className="editor-btn-text">{duplicating ? 'Duplicating...' : 'Duplicate as New Event'}</span>
+              <Copy size={13} /> <span className="editor-btn-text">{duplicating ? 'Duplicating...' : 'Duplicate'}</span>
             </button>
           ) : isPublished ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
               <button
                 type="button"
                 onClick={() => setIsWhatsAppOpen(true)}
@@ -1166,7 +1168,7 @@ export const GatherEditor = () => {
               onClick={handlePublishWithCredit}
               disabled={publishingWithCredit}
               className="btn-tactile btn-tactile-matcha"
-              style={{ fontSize: '0.82rem', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' }}
+              style={{ fontSize: '0.82rem', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', flexShrink: 0 }}
             >
               {publishingWithCredit ? <Loader2 size={13} className="animate-spin" /> : <Ticket size={13} />}
               {publishingWithCredit ? 'Publishing...' : <><span className="editor-btn-text">Publish </span><span>(1 cr)</span></>}
@@ -1176,11 +1178,113 @@ export const GatherEditor = () => {
               type="button"
               onClick={() => setIsTopUpOpen(true)}
               className="btn-accent"
-              style={{ fontSize: '0.82rem', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' }}
+              style={{ fontSize: '0.82rem', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', flexShrink: 0 }}
             >
               <Ticket size={13} /> <span className="editor-btn-text">Publish </span><span>(Buy)</span>
             </button>
           )}
+
+          {/* Mobile Overflow Menu */}
+          <div style={{ position: 'relative' }} className="editor-mobile-more-menu-wrapper">
+            <button
+              type="button"
+              onClick={() => setIsMobileMoreOpen(!isMobileMoreOpen)}
+              className="btn-secondary editor-mobile-more-menu-btn"
+              style={{ padding: '6px 8px', display: 'none', alignItems: 'center', justifyContent: 'center' }}
+              title="More options"
+            >
+              <MoreVertical size={16} />
+            </button>
+            {isMobileMoreOpen && (
+              <>
+                <div 
+                  style={{ position: 'fixed', inset: 0, zIndex: 110 }} 
+                  onClick={() => setIsMobileMoreOpen(false)} 
+                />
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  right: 0,
+                  marginTop: '6px',
+                  background: '#ffffff',
+                  border: 'var(--border-tactile-thin)',
+                  borderRadius: '10px',
+                  boxShadow: 'var(--shadow-lg)',
+                  padding: '6px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                  minWidth: '175px',
+                  zIndex: 120
+                }}>
+                  <Link
+                    to={`/gather/${id}/preview`}
+                    target="_blank"
+                    onClick={() => setIsMobileMoreOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 10px',
+                      fontSize: '0.82rem',
+                      color: 'var(--ink)',
+                      textDecoration: 'none',
+                      borderRadius: '6px'
+                    }}
+                  >
+                    <ExternalLink size={14} /> Preview Public Page
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMoreOpen(false);
+                      handleDuplicate();
+                    }}
+                    disabled={duplicating}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 10px',
+                      fontSize: '0.82rem',
+                      color: 'var(--ink)',
+                      background: 'none',
+                      border: 'none',
+                      borderRadius: '6px',
+                      width: '100%',
+                      textAlign: 'left',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Copy size={14} /> {duplicating ? 'Duplicating...' : 'Duplicate Event'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMoreOpen(false);
+                      setActiveTab('settings');
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 10px',
+                      fontSize: '0.82rem',
+                      color: 'var(--ink)',
+                      background: 'none',
+                      border: 'none',
+                      borderRadius: '6px',
+                      width: '100%',
+                      textAlign: 'left',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Settings size={14} /> Event Settings
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </header>
 
@@ -2176,6 +2280,226 @@ export const GatherEditor = () => {
               </div>
             </div>
 
+            {/* In-Flow Publish & Launch Card (End-of-flow CTA) */}
+            <div className="tactile-card" style={{
+              padding: '24px 20px',
+              background: isPublished ? 'linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%)' : 'linear-gradient(135deg, #faf7f2 0%, #ffffff 100%)',
+              border: isPublished ? '1.5px solid #86efac' : 'var(--border-tactile)',
+              borderRadius: '16px',
+              boxShadow: 'var(--shadow-tactile-sm)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '18px',
+              marginTop: '8px'
+            }}>
+              {/* Card Header */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '10px',
+                    background: isConcluded ? '#64748b' : isPublished ? '#16a34a' : 'var(--accent-vermilion)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#ffffff',
+                    flexShrink: 0,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                  }}>
+                    {isConcluded ? <Lock size={18} /> : isPublished ? <CheckCircle2 size={20} /> : <Sparkles size={19} />}
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '1.08rem', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
+                      {isConcluded ? 'Celebration Concluded' : isPublished ? 'Event is Live & Accepting RSVPs' : 'Ready to Launch Your Event?'}
+                    </h3>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '3px', margin: 0 }}>
+                      {isConcluded
+                        ? 'This event is concluded and preserved as a memory keepsake.'
+                        : isPublished
+                        ? 'Your celebration invitation is active. Share it with your guests!'
+                        : 'Review your event checklist and publish to activate guest RSVPs.'}
+                    </p>
+                  </div>
+                </div>
+                <span className={`badge ${isConcluded ? 'badge-neutral' : isPublished ? 'badge-live' : 'badge-draft'}`} style={{ flexShrink: 0 }}>
+                  {isConcluded ? 'Concluded' : isPublished ? 'Live' : 'Draft'}
+                </span>
+              </div>
+
+              {/* Readiness Checklist */}
+              {!isConcluded && (
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.85)',
+                  border: '1px solid #e7e2d9',
+                  borderRadius: '10px',
+                  padding: '12px 14px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                  gap: '10px',
+                  fontSize: '0.78rem'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                    {details.title ? (
+                      <CheckCircle2 size={15} style={{ color: '#16a34a', flexShrink: 0 }} />
+                    ) : (
+                      <AlertCircle size={15} style={{ color: '#ea580c', flexShrink: 0 }} />
+                    )}
+                    <span style={{ color: details.title ? 'var(--ink)' : '#ea580c', fontWeight: details.title ? 500 : 600 }}>
+                      {details.title ? 'Event Title set' : 'Add Event Title *'}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                    {details.eventDate ? (
+                      <CheckCircle2 size={15} style={{ color: '#16a34a', flexShrink: 0 }} />
+                    ) : (
+                      <AlertCircle size={15} style={{ color: '#ea580c', flexShrink: 0 }} />
+                    )}
+                    <span style={{ color: details.eventDate ? 'var(--ink)' : '#ea580c', fontWeight: details.eventDate ? 500 : 600 }}>
+                      {details.eventDate ? `${details.eventDate}` : 'Set Event Date *'}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                    {(venue.venueName || venue.address) ? (
+                      <CheckCircle2 size={15} style={{ color: '#16a34a', flexShrink: 0 }} />
+                    ) : (
+                      <span style={{ width: '15px', height: '15px', borderRadius: '50%', border: '1.5px dashed #cbd5e1', display: 'inline-block', flexShrink: 0 }} />
+                    )}
+                    <span style={{ color: (venue.venueName || venue.address) ? 'var(--ink)' : 'var(--text-muted)' }}>
+                      {(venue.venueName || venue.address) ? 'Location specified' : 'Location (Optional)'}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                    {details.coverImageUrl ? (
+                      <CheckCircle2 size={15} style={{ color: '#16a34a', flexShrink: 0 }} />
+                    ) : (
+                      <span style={{ width: '15px', height: '15px', borderRadius: '50%', border: '1.5px dashed #cbd5e1', display: 'inline-block', flexShrink: 0 }} />
+                    )}
+                    <span style={{ color: details.coverImageUrl ? 'var(--ink)' : 'var(--text-muted)' }}>
+                      {details.coverImageUrl ? 'Cover image added' : 'Cover Image (Optional)'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons based on status */}
+              {isConcluded ? (
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={handleDuplicate}
+                    disabled={duplicating}
+                    className="btn-tactile btn-tactile-sunflower"
+                    style={{ flex: 1, padding: '12px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  >
+                    <Copy size={16} /> {duplicating ? 'Duplicating...' : 'Duplicate as New Event Draft'}
+                  </button>
+                </div>
+              ) : isPublished ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setIsWhatsAppOpen(true)}
+                      className="btn-tactile"
+                      style={{ padding: '12px', fontSize: '0.9rem', backgroundColor: '#25D366', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                    >
+                      <MessageSquare size={16} /> WhatsApp Invites
+                    </button>
+                    <Link
+                      to={`/gather/${id}/share`}
+                      className="btn-tactile btn-tactile-dark"
+                      style={{ padding: '12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
+                    >
+                      <Share2 size={16} /> Share & QR Studio
+                    </Link>
+                  </div>
+                  <Link
+                    to={`/gather/${id}/preview`}
+                    target="_blank"
+                    className="btn-secondary"
+                    style={{ padding: '9px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', textDecoration: 'none' }}
+                  >
+                    <Eye size={14} /> Open Live Guest Preview <ExternalLink size={12} />
+                  </Link>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {/* Balance Indicator */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    background: '#f8fafc',
+                    borderRadius: '8px',
+                    fontSize: '0.82rem'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Ticket size={15} style={{ color: 'var(--accent-vermilion)' }} />
+                      <span>Publishing cost: <strong>1 Event Credit</strong></span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>Your balance:</span>
+                      <strong style={{ color: (creditsBalance || 0) >= 1 ? '#16a34a' : 'var(--accent-vermilion)' }}>
+                        {creditsBalance || 0} {(creditsBalance || 0) === 1 ? 'Credit' : 'Credits'}
+                      </strong>
+                    </div>
+                  </div>
+
+                  {/* Primary CTA */}
+                  {(creditsBalance || 0) >= 1 ? (
+                    <button
+                      type="button"
+                      onClick={handlePublishWithCredit}
+                      disabled={publishingWithCredit || !details.title}
+                      className="btn-tactile btn-tactile-matcha"
+                      style={{
+                        width: '100%',
+                        padding: '14px',
+                        fontSize: '0.98rem',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        opacity: (!details.title || publishingWithCredit) ? 0.6 : 1,
+                        cursor: (!details.title || publishingWithCredit) ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      {publishingWithCredit ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
+                      {publishingWithCredit ? 'Publishing Event...' : 'Publish Event Now (1 Credit)'}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setIsTopUpOpen(true)}
+                      className="btn-accent"
+                      style={{
+                        width: '100%',
+                        padding: '14px',
+                        fontSize: '0.98rem',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      <Ticket size={18} /> Top Up Credits & Publish (₹199)
+                    </button>
+                  )}
+
+                  <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)', textAlign: 'center', margin: 0 }}>
+                    Publishing activates your event URL, live RSVP collection, WhatsApp sharing & guest photo wall.
+                  </p>
+                </div>
+              )}
+            </div>
+
             {/* Mobile button to jump to Live Preview */}
             <div className="editor-mobile-switch-to-preview" style={{ display: 'none', marginTop: '10px' }}>
               <button
@@ -2962,6 +3286,66 @@ export const GatherEditor = () => {
             </div>
           </div>
 
+        </div>
+
+        {/* Mobile Sticky Bottom Action Bar for Designer Tab */}
+        <div className="editor-mobile-sticky-bottom-bar">
+          <button 
+            type="button" 
+            onClick={() => {
+              setDesignerMobileTab(designerMobileTab === 'form' ? 'preview' : 'form');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="btn-tactile btn-tactile-paper"
+            style={{ flex: 1, padding: '10px 12px', fontSize: '0.84rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+          >
+            {designerMobileTab === 'form' ? (
+              <><Eye size={15} /> Preview</>
+            ) : (
+              <><Edit3 size={15} /> Edit Form</>
+            )}
+          </button>
+          
+          {isConcluded ? (
+            <button
+              type="button"
+              onClick={handleDuplicate}
+              disabled={duplicating}
+              className="btn-tactile btn-tactile-sunflower"
+              style={{ flex: 1.5, padding: '10px 12px', fontSize: '0.84rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+            >
+              <Copy size={15} /> {duplicating ? 'Duplicating...' : 'Duplicate'}
+            </button>
+          ) : isPublished ? (
+            <button
+              type="button"
+              onClick={() => setIsWhatsAppOpen(true)}
+              className="btn-tactile"
+              style={{ flex: 1.5, padding: '10px 12px', fontSize: '0.84rem', backgroundColor: '#25D366', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+            >
+              <MessageSquare size={15} /> WhatsApp
+            </button>
+          ) : (creditsBalance || 0) >= 1 ? (
+            <button
+              type="button"
+              onClick={handlePublishWithCredit}
+              disabled={publishingWithCredit || !details.title}
+              className="btn-tactile btn-tactile-matcha"
+              style={{ flex: 1.5, padding: '10px 12px', fontSize: '0.84rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', opacity: (!details.title || publishingWithCredit) ? 0.6 : 1 }}
+            >
+              {publishingWithCredit ? <Loader2 size={15} className="animate-spin" /> : <Sparkles size={15} />}
+              {publishingWithCredit ? 'Publishing...' : 'Publish (1 cr)'}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsTopUpOpen(true)}
+              className="btn-accent"
+              style={{ flex: 1.5, padding: '10px 12px', fontSize: '0.84rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+            >
+              <Ticket size={15} /> Publish (Buy)
+            </button>
+          )}
         </div>
         </>
       )}

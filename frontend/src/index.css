@@ -812,9 +812,36 @@ html, body {
   display: none;
 }
 
+.editor-subnav-tabs {
+  display: flex;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0 16px;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.editor-subnav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.editor-desktop-action {
+  display: inline-flex !important;
+}
+
+.editor-mobile-more-menu-btn {
+  display: none !important;
+}
+
+.editor-mobile-sticky-bottom-bar {
+  display: none;
+}
+
 @media (max-width: 640px) {
   .editor-header {
     padding: 8px 10px;
+    gap: 8px;
   }
   .editor-header-actions {
     gap: 6px !important;
@@ -822,9 +849,20 @@ html, body {
   .editor-brand-text {
     display: none !important;
   }
+  .editor-brand-icon {
+    display: none !important;
+  }
+  .editor-header-divider {
+    border-left: none !important;
+    padding-left: 4px !important;
+  }
   .editor-header-title {
-    max-width: 130px !important;
-    font-size: 0.94rem !important;
+    max-width: 140px !important;
+    font-size: 0.92rem !important;
+    margin-top: 1px !important;
+  }
+  .editor-autosave-feedback {
+    display: none !important;
   }
   .editor-btn-text {
     display: none !important;
@@ -834,6 +872,12 @@ html, body {
   }
   .editor-credits-short {
     display: inline !important;
+  }
+  .editor-desktop-action {
+    display: none !important;
+  }
+  .editor-mobile-more-menu-btn {
+    display: inline-flex !important;
   }
 }
 
@@ -913,13 +957,13 @@ html, body {
   }
 
   .editor-controls-column {
-    padding: 16px 12px !important;
+    padding: 16px 12px 90px !important;
     border-right: none !important;
     height: auto !important;
   }
 
   .editor-preview-column {
-    padding: 10px 4px !important;
+    padding: 10px 4px 90px !important;
     background: var(--paper-canvas) !important;
     background-image: none !important;
     height: auto !important;
@@ -932,6 +976,23 @@ html, body {
     box-shadow: none !important;
     max-width: 100% !important;
     min-height: auto !important;
+  }
+
+  .editor-mobile-sticky-bottom-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: var(--border-tactile-thin);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+    padding: 10px 14px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    gap: 10px;
+    z-index: 100;
   }
 }
 
