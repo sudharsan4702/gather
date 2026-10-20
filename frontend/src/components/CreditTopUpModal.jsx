@@ -140,11 +140,14 @@ export const CreditTopUpModal = ({ isOpen, onClose, onSuccess, initialQuantity =
       setSuccessMsg(`Added ${result.creditsAdded} ${result.creditsAdded === 1 ? 'credit' : 'credits'}. Current balance: ${result.newBalance}.`);
       setProcessing(false);
 
-      if (onSuccess) {
-        setTimeout(() => {
+      setTimeout(() => {
+        if (onSuccess) {
           onSuccess(result.creditsAdded);
-        }, 1200);
-      }
+        }
+        if (onClose) {
+          onClose();
+        }
+      }, 1200);
     } catch (err) {
       setError(err.message || 'Payment verification failed');
       setProcessing(false);

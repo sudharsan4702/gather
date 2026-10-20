@@ -366,6 +366,7 @@ export const PaymentPage = () => {
 
       {showTopUpModal && (
         <CreditTopUpModal
+          isOpen={showTopUpModal}
           onClose={() => setShowTopUpModal(false)}
           onSuccess={() => {
             setShowTopUpModal(false);

@@ -453,8 +453,10 @@ export const Dashboard = () => {
           setTargetPublishId(null);
         }}
         onSuccess={() => {
+          setIsTopUpOpen(false);
           if (targetPublishId) {
             handlePublishFromDashboard(targetPublishId);
+            setTargetPublishId(null);
           }
         }}
       />

@@ -3562,7 +3562,10 @@ export const GatherEditor = () => {
       <CreditTopUpModal
         isOpen={isTopUpOpen}
         onClose={() => setIsTopUpOpen(false)}
-        onSuccess={() => handlePublishWithCredit()}
+        onSuccess={() => {
+          setIsTopUpOpen(false);
+          handlePublishWithCredit();
+        }}
       />
 
     </div>
